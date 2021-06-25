@@ -15,14 +15,9 @@ public class TransactionController {
 
   @RequestMapping(value = "/transactions", method = RequestMethod.POST)
   public ResponseEntity<Transaction> newTransaction(@RequestBody Transaction transaction) {
-    if (transactionService.isInvalid(transaction) || transactionService.isFuture(transaction)) {
-      return new ResponseEntity<>(transaction, HttpStatus.UNPROCESSABLE_ENTITY);
-    } else if (!transactionService.isActiveLast60Seconds(transaction)) {
-      return new ResponseEntity<>(transaction, HttpStatus.NO_CONTENT);
-    } else {
-      transactionService.addTransaction(transaction);
-      return new ResponseEntity<>(transaction, HttpStatus.CREATED);
-    }
+
+      return transactionService.addTransaction2(transaction);
+
   }
 
   @RequestMapping(value = "/transactions", method = RequestMethod.GET)

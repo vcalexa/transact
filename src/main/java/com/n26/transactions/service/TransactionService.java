@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,8 +22,17 @@ public class TransactionService {
     transactionList = Collections.synchronizedList(new ArrayList<>());
   }
 
-  public void addTransaction(Transaction transaction) {
-    if (isActive(transaction, EXPIRY_TIME)) transactionList.add(transaction);
+  public ResponseEntity<Transaction> addTransaction2(Transaction transaction) {
+    if(isFuture(transaction) || isInvalid(transaction)) return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+    else if (isActive(transaction, EXPIRY_TIME)) {
+      transactionList.add(transaction);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+  }
+
+  public void addTransaction(Transaction transaction){
+    if(isActive(transaction, EXPIRY_TIME))
+    transactionList.add(transaction);
   }
 
   public void deleteAllTransactions() {
